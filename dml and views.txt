@@ -1,0 +1,107 @@
+-- Creating the SALESPEOPLE table
+CREATE TABLE SALESPEOPLE (
+    SNUM INT PRIMARY KEY,
+    SNAME VARCHAR(50),
+    CITY VARCHAR(50),
+    COMM DECIMAL(10, 2)
+);
+
+-- Creating the CUSTOMER table
+CREATE TABLE CUSTOMER (
+    CNUM INT PRIMARY KEY,
+    CNAME VARCHAR(50),
+    CITY VARCHAR(50),
+    RATING INT,
+    SNUM INT,
+    FOREIGN KEY (SNUM) REFERENCES SALESPEOPLE(SNUM)
+);
+
+-- Creating the ORDERS table
+-- Creating the ORDERS table
+CREATE TABLE ORDERS (
+    ONUM INT PRIMARY KEY,
+    AMT DECIMAL(10, 2),
+    ODATE DATE,
+    CNUM INT,
+    SNUM INT,
+    FOREIGN KEY (CNUM) REFERENCES CUSTOMER(CNUM),
+    FOREIGN KEY (SNUM) REFERENCES SALESPEOPLE(SNUM)
+);
+
+-- Inserting values into SALESPEOPLE table
+INSERT INTO SALESPEOPLE (SNUM, SNAME, CITY, COMM) VALUES
+(1, 'John Doe', 'New York', 1500.00),
+(2, 'Jane Smith', 'Los Angeles', 1700.00),
+(3, 'Michael Johnson', 'Chicago', 1600.00);
+
+-- Inserting values into CUSTOMER table
+INSERT INTO CUSTOMER (CNUM, CNAME, CITY, RATING, SNUM) VALUES
+(1, 'ABC Company', 'New York', 5, 1),
+(2, 'XYZ Inc.', 'Los Angeles', 4, 2),
+(3, '123 Corporation', 'Chicago', 5, 3),
+(4, 'PQR Ltd.', 'New York', 4, 1);
+
+-- Inserting values into ORDERS table
+INSERT INTO ORDERS (ONUM, AMT, ODATE, CNUM, SNUM) VALUES
+(101, 1000.00, '2024-05-01', 1, 1),
+(102, 1500.00, '2024-05-05', 2, 2),
+(103, 2000.00, '2024-05-10', 3, 3),
+(104, 1200.00, '2024-05-15', 1, 1),
+(105, 1800.00, '2024-05-20', 2, 2),
+(106, 2200.00, '2024-05-25', 3, 3),
+(107, 1300.00, '2024-05-30', 4, 1);
+
+CREATE VIEW Highest_Rating_Customers AS
+SELECT CNUM, CNAME, CITY, RATING, SNUM
+FROM CUSTOMER
+WHERE RATING = (SELECT MAX(RATING) FROM CUSTOMER);
+
+CREATE VIEW Salespersons_Per_City AS
+SELECT CITY, COUNT(SNUM) AS NumberOfSalespersons
+FROM SALESPEOPLE
+GROUP BY CITY;
+
+CREATE VIEW Salesperson_Order_Stats AS
+SELECT SNUM, AVG(AMT) AS AverageOrder, SUM(AMT) AS TotalOrder
+FROM ORDERS
+GROUP BY SNUM;
+
+CREATE VIEW Salespersons_With_Multiple_Customers AS
+SELECT SNUM, COUNT(CNUM) AS NumberOfCustomers
+FROM CUSTOMER
+GROUP BY SNUM
+HAVING COUNT(CNUM) > 1;
+
+CREATE VIEW Salespeople_Customer_Orders AS
+SELECT S.SNAME AS SalespersonName, C.CNAME AS CustomerName, O.ONUM AS OrderNumber
+FROM SALESPEOPLE S
+JOIN CUSTOMER C ON S.SNUM = C.SNUM
+JOIN ORDERS O ON C.CNUM = O.CNUM;
+
+CREATE VIEW Salespeople_Commission AS
+SELECT SNUM, COMM
+FROM SALESPEOPLE
+WHERE COMM BETWEEN 1000 AND 2000
+WITH CHECK OPTION;
+
+verification//
+
+-- Querying the view of all customers with the highest rating
+SELECT * FROM Highest_Rating_Customers;
+
+-- Querying the view of the number of salespersons in each city
+SELECT * FROM Salespersons_Per_City;
+
+-- Querying the view of the average and total orders for each salesperson
+SELECT * FROM Salesperson_Order_Stats;
+
+-- Querying the view of salespeople with multiple customers
+SELECT * FROM Salespersons_With_Multiple_Customers;
+
+-- Querying the combined view of salespeople, customers, and orders
+SELECT * FROM Salespeople_Customer_Orders;
+
+-- Querying the updatable view of salespeople commission within a specific range
+SELECT * FROM Salespeople_Commission;
+
+

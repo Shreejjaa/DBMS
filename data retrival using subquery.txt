@@ -1,0 +1,106 @@
+CREATE TABLE department (
+    Department_ID INT PRIMARY KEY,
+    Department_Name VARCHAR(50),
+    Location_ID INT
+);
+
+CREATE TABLE employee (
+    First_Name VARCHAR(50),
+    Last_Name VARCHAR(50),
+    Department_ID INT,
+    Salary DECIMAL(10, 2),
+    FOREIGN KEY (Department_ID) REFERENCES department(Department_ID)
+);
+
+-- Insert values into the department table
+INSERT INTO department (Department_ID, Department_Name, Location_ID) VALUES
+(1, 'Sales', 101),
+(2, 'Marketing', 102),
+(3, 'Finance', 103),
+(4, 'HR', 104);
+
+-- Insert values into the employee table
+INSERT INTO employee (First_Name, Last_Name, Department_ID, Salary) VALUES
+('John', 'Doe', 1, 50000),
+('Jane', 'Smith', 2, 55000),
+('Michael', 'Johnson', 1, 60000),
+('Emily', 'Williams', 3, 65000),
+('David', 'Brown', 4, 70000),
+('Sarah', 'Taylor', 2, 75000),
+('Robert', 'Miller', 3, 80000),
+('Jennifer', 'Anderson', 1, 85000),
+('James', 'Wilson', 4, 90000),
+('Karen', 'Jones', 1, 95000);
+
+
+a) Display the name of the employee who earns the maximum salary:
+
+sql
+Copy code
+SELECT First_Name, Last_Name
+FROM employee
+WHERE Salary = (SELECT MAX(Salary) FROM employee);
+b) Display the name of the employee who earns the maximum salary and whose job is a salesman:
+
+sql
+Copy code
+SELECT e.First_Name, e.Last_Name
+FROM employee e
+JOIN department d ON e.Department_ID = d.Department_ID
+WHERE e.Salary = (SELECT MAX(Salary) FROM employee WHERE Department_ID = d.Department_ID AND job = 'salesman');
+c) Display the name of the employee who earns the minimum salary and whose job is a clerk:
+
+sql
+Copy code
+SELECT e.First_Name, e.Last_Name
+FROM employee e
+JOIN department d ON e.Department_ID = d.Department_ID
+WHERE e.Salary = (SELECT MIN(Salary) FROM employee WHERE Department_ID = d.Department_ID AND job = 'clerk');
+d) Display the department whose average salary is maximum:
+
+sql
+Copy code
+SELECT d.Department_Name
+FROM department d
+JOIN employee e ON d.Department_ID = e.Department_ID
+GROUP BY d.Department_ID
+HAVING AVG(e.Salary) = (SELECT MAX(avg_salary) FROM (SELECT AVG(Salary) as avg_salary FROM employee GROUP BY Department_ID) AS avg_salaries);
+e) List the name of the employee whose salary is more than 'TURNER':
+
+sql
+Copy code
+SELECT First_Name, Last_Name
+FROM employee
+WHERE Salary > (SELECT Salary FROM employee WHERE Last_Name = 'TURNER');
+f) List the name of the employee who joined after ALLEN:
+
+
+SELECT First_Name, Last_Name
+FROM employee
+WHERE hire_date > (SELECT hire_date FROM employee WHERE Last_Name = 'ALLEN');
+
+g) Display the name of the department in which 'FORD' works:
+
+SELECT d.Department_Name
+FROM employee e
+JOIN department d ON e.Department_ID = d.Department_ID
+WHERE e.Last_Name = 'FORD';
+h) Display the name of the department whose salary is maximum:
+
+sql
+Copy code
+SELECT d.Department_Name
+FROM department d
+JOIN employee e ON d.Department_ID = e.Department_ID
+GROUP BY d.Department_ID
+ORDER BY SUM(e.Salary) DESC
+LIMIT 1;
+i) Display the name of the city (location) in which 'SMITH' works:
+
+sql
+Copy code
+SELECT loc.Location_ID
+FROM department d
+JOIN employee e ON d.Department_ID = e.Department_ID
+JOIN loc ON d.Location_ID = loc.Location_ID
+WHERE e.Last_Name = 'SMITH';

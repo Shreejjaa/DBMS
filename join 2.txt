@@ -1,0 +1,93 @@
+CREATE TABLE EMPLOYEES (
+    ENO INT PRIMARY KEY,
+    ENAME VARCHAR(255),
+    ZIP INT,
+    HDATES DATE,
+    FOREIGN KEY (ZIP) REFERENCES ZIPCODES(ZIP)
+);
+
+CREATE TABLE PARTS (
+    PNO INT PRIMARY KEY,
+    PNAME VARCHAR(255),
+    QOH INT,
+    PRICE DECIMAL(10, 2),
+    LEVEL INT
+);
+
+CREATE TABLE CUSTOMERS (
+    CNO INT PRIMARY KEY,
+    CNAME VARCHAR(255),
+    STREET VARCHAR(255),
+    ZIP INT,
+    PHONE VARCHAR(20),
+    FOREIGN KEY (ZIP) REFERENCES ZIPCODES(ZIP)
+);
+
+CREATE TABLE ORDERS (
+    ONO INT PRIMARY KEY,
+    CNO INT,
+    ENO INT,
+    PRECEIVED DATE,
+    SHIPPED DATE,
+    FOREIGN KEY (CNO) REFERENCES CUSTOMERS(CNO),
+    FOREIGN KEY (ENO) REFERENCES EMPLOYEES(ENO)
+);
+
+CREATE TABLE ODETAILS (
+    ONO INT,
+    PNO INT,
+    OTY INT,
+    PRIMARY KEY (ONO, PNO),
+    FOREIGN KEY (ONO) REFERENCES ORDERS(ONO),
+    FOREIGN KEY (PNO) REFERENCES PARTS(PNO)
+);
+
+CREATE TABLE ZIPCODES (
+    ZIP INT PRIMARY KEY,
+    CITY VARCHAR(255)
+);
+Now let's execute the queries:
+
+a) Get PNO & PNAME values of parts that are priced less than 20.
+
+sql
+Copy code
+SELECT PNO, PNAME
+FROM PARTS
+WHERE PRICE < 20;
+b) Get PNO values for parts for which orders have been placed.
+
+sql
+Copy code
+SELECT DISTINCT PNO
+FROM ODETAILS;
+c) Get all the details of customers whose names begin with the letter "S".
+
+sql
+Copy code
+SELECT *
+FROM CUSTOMERS
+WHERE CNAME LIKE 'S%';
+d) Get the ONO & CNAME values for customers whose orders have not yet been shipped.
+
+sql
+Copy code
+SELECT O.ONO, C.CNAME
+FROM ORDERS O
+JOIN CUSTOMERS C ON O.CNO = C.CNO
+WHERE O.SHIPPED IS NULL;
+e) Get CNAME & ENAME pairs such that the customer with the same CNAME has placed an order through the employee with the name ENAME.
+
+sql
+Copy code
+SELECT C.CNAME, E.ENAME
+FROM CUSTOMERS C
+JOIN ORDERS O ON C.CNO = O.CNO
+JOIN EMPLOYEES E ON O.ENO = E.ENO;
+f) Get the name of employees who were hired on the earliest date.
+
+sql
+Copy code
+SELECT ENAME
+FROM EMPLOYEES
+WHERE HDATES = (SELECT MIN(HDATES) FROM EMPLOYEES);

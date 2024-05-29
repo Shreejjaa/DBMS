@@ -1,0 +1,155 @@
+CREATE TABLE Sailors (
+    s_id INT PRIMARY KEY,
+    s_name VARCHAR(255),
+    rating INT,
+    age INT
+);
+
+CREATE TABLE Boats (
+    b_id INT PRIMARY KEY,
+    b_name VARCHAR(255),
+    color VARCHAR(50)
+);
+
+CREATE TABLE Reserves (
+    s_id INT,
+    b_id INT,
+    day VARCHAR(20),
+    PRIMARY KEY (s_id, b_id),
+    FOREIGN KEY (s_id) REFERENCES Sailors(s_id),
+    FOREIGN KEY (b_id) REFERENCES Boats(b_id)
+);
+
+-- Inserting sample records into Sailors table
+INSERT INTO Sailors (s_id, s_name, rating, age) VALUES
+(101, 'Tarun', 8, 35),
+(102, 'Sandeep', 7, 45),
+(103, 'Raj', 6, 25),
+(104, 'Priya', 9, 28);
+
+-- Inserting sample records into Boats table
+INSERT INTO Boats (b_id, b_name, color) VALUES
+(201, 'Boat1', 'red'),
+(202, 'Boat2', 'green'),
+(203, 'Boat3', 'blue'),
+(204, 'Boat4', 'green');
+
+-- Inserting sample records into Reserves table
+INSERT INTO Reserves (s_id, b_id, day) VALUES
+(101, 201, 'Monday'),
+(102, 202, 'Tuesday'),
+(103, 203, 'Monday'),
+(104, 204, 'Wednesday');
+Teacher, Subject, Taught By, and Student:
+sql
+Copy code
+CREATE TABLE Teacher (
+    Tid INT PRIMARY KEY,
+    Name VARCHAR(255),
+    Dept VARCHAR(100)
+);
+
+CREATE TABLE Subject (
+    Subno INT PRIMARY KEY,
+    Subtitle VARCHAR(255)
+);
+
+CREATE TABLE Taught_By (
+    Tid INT,
+    Subno INT,
+    PRIMARY KEY (Tid, Subno),
+    FOREIGN KEY (Tid) REFERENCES Teacher(Tid),
+    FOREIGN KEY (Subno) REFERENCES Subject(Subno)
+);
+
+CREATE TABLE Student (
+    Rollno INT PRIMARY KEY,
+    Sname VARCHAR(255),
+    City VARCHAR(100)
+);
+
+-- Inserting sample records into Teacher table
+INSERT INTO Teacher (Tid, Name, Dept) VALUES
+(501, 'John', 'Physics'),
+(502, 'Alice', 'Mathematics'),
+(503, 'Bob', 'Physics'),
+(504, 'Emma', 'Computer Science');
+
+-- Inserting sample records into Subject table
+INSERT INTO Subject (Subno, Subtitle) VALUES
+(601, 'Thermodynamics'),
+(602, 'DBMS'),
+(603, 'Calculus');
+
+-- Inserting sample records into Taught_By table
+INSERT INTO Taught_By (Tid, Subno) VALUES
+(501, 601),
+(503, 601),
+(502, 602),
+(504, 602);
+
+-- Inserting sample records into Student table
+INSERT INTO Student (Rollno, Sname, City) VALUES
+(20, 'Rahul', 'Kolkata'),
+(21, 'Amit', 'Delhi'),
+(22, 'Sachin', 'Kolkata'),
+(23, 'Riya', 'Mumbai'),
+(24, 'Tina', 'Kolkata'),
+(25, 'Anil', 'Chennai');
+Now let's execute the queries for both scenarios:
+
+Queries for Scenario 1:
+a) Find the color of boats reserved by 'Tarun'.
+
+sql
+Copy code
+SELECT b.color
+FROM Boats b
+JOIN Reserves r ON b.b_id = r.b_id
+JOIN Sailors s ON r.s_id = s.s_id
+WHERE s.s_name = 'Tarun';
+b) Find the sailor_id's and sailor_names who have reserved boats on 'Monday'.
+
+sql
+Copy code
+SELECT s.s_id, s.s_name
+FROM Sailors s
+JOIN Reserves r ON s.s_id = r.s_id
+WHERE r.day = 'Monday';
+c) List boat id's and boat names for 'red' and 'green' colors only.
+
+sql
+Copy code
+SELECT b_id, b_name
+FROM Boats
+WHERE color IN ('red', 'green');
+d) Delete all the sailors' information whose age is greater than 60.
+
+sql
+Copy code
+DELETE FROM Sailors WHERE age > 60;
+Queries for Scenario 2:
+a) Get the names of all the teachers of 'Physics' department who teach 'Thermodynamics'.
+
+sql
+Copy code
+SELECT t.Name
+FROM Teacher t
+JOIN Taught_By tb ON t.Tid = tb.Tid
+JOIN Subject s ON tb.Subno = s.Subno
+WHERE t.Dept = 'Physics' AND s.Subtitle = 'Thermodynamics';
+b) Rename the subject 'DBMS' to 'RDBMS'.
+
+sql
+Copy code
+UPDATE Subject SET Subtitle = 'RDBMS' WHERE Subtitle = 'DBMS';
+c) Find out all the students who stay in 'Kolkata' and whose roll number is between 20 and 25.
+
+sql
+Copy code
+SELECT * FROM Student WHERE City = 'Kolkata' AND Rollno BETWEEN 20 AND 25;
+d) Display all the students' information in descending order of their roll number who stay in 'Kolkata'.
+
+sql
+Copy code
+SELECT * FROM Student WHERE City = 'Kolkata' ORDER BY Rollno DESC;

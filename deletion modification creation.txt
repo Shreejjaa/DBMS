@@ -1,0 +1,50 @@
+Display all the records in the EMP table.
+
+sql
+Copy code
+SELECT * FROM EMP;
+b) Display the details of all the employees who are working as managers.
+
+sql
+Copy code
+SELECT * FROM EMP WHERE JOB = 'Manager';
+c) Display the details of the employee whose employee no. is 7369.
+
+sql
+Copy code
+SELECT * FROM EMP WHERE EMPNO = 7369;
+d) Display details of all the employees who joined on 1st May, 1981.
+
+sql
+Copy code
+SELECT * FROM EMP WHERE HIREDATE = TO_DATE('01-MAY-1981', 'DD-MON-YYYY');
+e) Display details of all the employees with a salary greater than Rs. 1500/-.
+
+sql
+Copy code
+SELECT * FROM EMP WHERE SALARY > 1500;
+f) Display details of all the employees who are not getting any commission.
+
+sql
+Copy code
+SELECT * FROM EMP WHERE COMM IS NULL;
+g) Display details of all the employees whose names are starting with "A".
+
+sql
+Copy code
+SELECT * FROM EMP WHERE ENAME LIKE 'A%';
+h) Add a new attribute Phone No. to the EMP table.
+
+sql
+Copy code
+ALTER TABLE EMP ADD Phone_No VARCHAR(20);
+i) Change the data type of the attribute Job from char to varchar2.
+
+sql
+Copy code
+ALTER TABLE EMP MODIFY Job VARCHAR2(50);
+j) Remove the attribute Phone No. from the table EMP.
+
+sql
+Copy code
+ALTER TABLE EMP DROP COLUMN Phone_No;

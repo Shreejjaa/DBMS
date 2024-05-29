@@ -1,0 +1,71 @@
+CREATE TABLE employee1 (
+    EID INT PRIMARY KEY,
+    EName VARCHAR(50),
+    CITY VARCHAR(50),
+    DESIGNATION VARCHAR(50),
+    SALARY DECIMAL(10, 2),
+    PERKS DECIMAL(10, 2)
+);
+INSERT INTO employee1 (EID, EName, CITY, DESIGNATION, SALARY, PERKS)
+VALUES 
+    (1, 'John Doe', 'New York', 'Manager', 75000, 450),
+    (2, 'Jane Smith', 'Los Angeles', 'Developer', 60000, 550),
+    (3, 'Sam Wilson', 'Chicago', 'Analyst', 50000, 300);
+CREATE OR REPLACE TRIGGER adjust_salary_before_insert
+BEFORE INSERT ON employee1
+FOR EACH ROW
+BEGIN
+    IF :NEW.PERKS > 500 THEN
+        :NEW.SALARY := :NEW.SALARY - 300;
+    END IF;
+END;
+/
+trigger test//////
+INSERT INTO employee1 (EID, EName, CITY, DESIGNATION, SALARY, PERKS)
+VALUES 
+    (4, 'Alice Brown', 'Houston', 'Consultant', 70000, 600);
+verification////
+SELECT * FROM employee1;
+
+CREATE OR REPLACE TRIGGER modify_salary_before_update
+BEFORE UPDATE ON employee1
+FOR EACH ROW
+BEGIN
+    IF :NEW.SALARY <= 500 THEN
+        :NEW.SALARY := 10000;
+    ELSE
+        :NEW.SALARY := 15000;
+    END IF;
+END;
+/trigger check
+UPDATE employee1
+SET SALARY = 400
+WHERE EID = 1;
+verification///
+SELECT * FROM employee1;
+
+CREATE TABLE emp (
+    empid INT PRIMARY KEY,
+    ename VARCHAR2(50),
+    salary NUMBER(10, 2)
+);
+CREATE TABLE emp_backup (
+    empid INT PRIMARY KEY,
+    ename VARCHAR2(50),
+    salary NUMBER(10, 2)
+);
+CREATE OR REPLACE TRIGGER copy_to_emp_backup
+AFTER INSERT ON emp
+FOR EACH ROW
+BEGIN
+    INSERT INTO emp_backup (empid, ename, salary)
+    VALUES (:NEW.empid, :NEW.ename, :NEW.salary);
+END;
+/
+trigger check
+INSERT INTO emp (empid, ename, salary)
+VALUES (1, 'John Doe', 50000);
+verification
+SELECT * FROM emp;
+SELECT * FROM emp_backup;
+

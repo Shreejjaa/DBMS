@@ -1,0 +1,66 @@
+CREATE TABLE Customers (
+    CustomerID INT PRIMARY KEY,
+    CustomerName VARCHAR(255),
+    ContactName VARCHAR(255),
+    Address VARCHAR(255),
+    City VARCHAR(255),
+    PostalCode VARCHAR(10),
+    Country VARCHAR(255)
+);
+
+CREATE TABLE Suppliers (
+    SupplierID INT PRIMARY KEY,
+    SupplierName VARCHAR(255),
+    ContactName VARCHAR(255),
+    Address VARCHAR(255),
+    City VARCHAR(255),
+    PostalCode VARCHAR(10),
+    Country VARCHAR(255)
+);
+
+INSERT INTO Customers (CustomerID, CustomerName, ContactName, Address, City, PostalCode, Country) VALUES
+(1, 'Alfreds Futter', 'Maria Anders', 'Obere Str.57', 'Berlin', '12209', 'Germany'),
+(2, 'Ana helados', 'Ana Trujillo', 'Avda. Constructi on 2222', 'Mexico', '05021', 'Mexico D.F'),
+(3, 'Antonio Moreno', 'Antonio Moreno', 'Matadero $2312', 'Mex', '05023', 'Mexico D.F');
+
+INSERT INTO Suppliers (SupplierID, SupplierName, ContactName, Address, City, PostalCode, Country) VALUES
+(1, 'Exotic Liquid', 'Charlotte Cooper', '49 Gilbert St.', 'Berlin', '12209', 'Germany'),
+(2, 'New Orleans Cajun Delights', 'Shelley Burke', 'P.O. Box 78934', 'Mexico', '05023', 'Mexico D.F.'),
+(3, 'Grandma Kelly''s Homestead', 'Regina Murphy', '707 Oxford Rd.', 'Ann Arbor', '48104', 'USA');
+Now, let's execute the queries:
+
+a) Selects all the different cities (only distinct values) from the "Customers" and the "Suppliers" tables:
+
+sql
+Copy code
+SELECT DISTINCT City FROM Customers
+UNION
+SELECT DISTINCT City FROM Suppliers;
+b) Select all cities from the "Customers" and "Suppliers" tables:
+
+sql
+Copy code
+SELECT City FROM Customers
+UNION ALL
+SELECT City FROM Suppliers;
+c) Select all German cities from the "Customers" and "Suppliers" tables:
+
+sql
+Copy code
+SELECT City FROM Customers WHERE Country = 'Germany'
+UNION
+SELECT City FROM Suppliers WHERE Country = 'Germany';
+d) Select all Customer name and supplier name from "Customers tables where city name is common in both:
+
+sql
+Copy code
+SELECT c.CustomerName AS Customer_Name, s.SupplierName AS Supplier_Name
+FROM Customers c
+JOIN Suppliers s ON c.City = s.City;
+e) Select all country names from Supplier Table which don't have any customer in customer table from its own country:
+
+sql
+Copy code
+SELECT DISTINCT Country 
+FROM Suppliers 
+WHERE Country NOT IN (SELECT DISTINCT Country FROM Customers);

@@ -1,0 +1,91 @@
+a) Display the current DATE and TIME
+SELECT SYSDATE FROM DUAL;
+
+-- b) Multiply 2 by 2
+SELECT 2 * 2 FROM DUAL;
+
+-- c) Find the absolute value of -15
+SELECT ABS(-15) FROM DUAL;
+
+-- d) Calculate the square root of 5
+SELECT SQRT(5) FROM DUAL;
+
+-- e) Round off 15.19 to one decimal point
+SELECT ROUND(15.19, 1) FROM DUAL;
+
+-- f) Display the name "IVAN BAYROSS" in lowercase
+SELECT LOWER('IVAN BAYROSS') FROM DUAL;
+
+-- g) Display the name "IVAN BAYROSS" in uppercase
+SELECT UPPER('IVAN BAYROSS') FROM DUAL;
+
+-- h) Add 5 months to the present date and print the output
+SELECT ADD_MONTHS(SYSDATE, 5) FROM DUAL;
+
+-- i) Display the number of months between '02-JAN-01' and '02-JUL-01'
+SELECT MONTHS_BETWEEN(TO_DATE('02-JUL-01', 'DD-MON-YY'), TO_DATE('02-JAN-01', 'DD-MON-YY')) FROM DUAL;
+
+-- j) Print the system date in the particular format 'DD/MM/YYYY'
+SELECT TO_CHAR(SYSDATE, 'DD/MM/YYYY') FROM DUAL;
+Creating EMP table and performing queries:
+sql
+Copy code
+CREATE TABLE EMP (
+    EMPNO INT PRIMARY KEY,
+    ENAME VARCHAR(10),
+    JOB VARCHAR(30),
+    MGR INT,
+    HIREDATE DATE,
+    SAL DECIMAL(10, 2),
+    COMM DECIMAL(10, 2) DEFAULT 0,
+    DEPT_NAME VARCHAR(50),
+    CONSTRAINT empno_range CHECK (EMPNO BETWEEN 7000 AND 8000),
+    CONSTRAINT ename_length CHECK (LENGTH(ENAME) <= 10),
+    CONSTRAINT mgr_fk FOREIGN KEY (MGR) REFERENCES EMP(EMPNO)
+);
+
+INSERT INTO EMP VALUES
+(7001, 'John', 'Manager', NULL, TO_DATE('01-JAN-2022', 'DD-MON-YYYY'), 5000, NULL, 'HR'),
+(7002, 'Alice', 'Clerk', 7001, TO_DATE('15-FEB-2022', 'DD-MON-YYYY'), 3000, NULL, 'HR'),
+(7003, 'Bob', 'Salesman', 7001, TO_DATE('10-MAR-2022', 'DD-MON-YYYY'), 2500, 500, 'Sales'),
+(7004, 'Emma', 'Manager', NULL, TO_DATE('20-JAN-2022', 'DD-MON-YYYY'), 5500, NULL, 'Finance'),
+(7005, 'David', 'Clerk', 7004, TO_DATE('05-FEB-2022', 'DD-MON-YYYY'), 3200, NULL, 'Finance'),
+(7006, 'Sarah', 'Salesman', 7004, TO_DATE('25-MAR-2022', 'DD-MON-YYYY'), 2800, 600, 'Sales'),
+(7007, 'Michael', 'Analyst', 7001, TO_DATE('03-APR-2022', 'DD-MON-YYYY'), 6000, NULL, 'IT'),
+(7008, 'Linda', 'Manager', NULL, TO_DATE('10-FEB-2022', 'DD-MON-YYYY'), 4800, NULL, 'IT'),
+(7009, 'Karen', 'Clerk', 7008, TO_DATE('12-MAR-2022', 'DD-MON-YYYY'), 3500, NULL, 'IT'),
+(7010, 'James', 'Salesman', 7008, TO_DATE('20-MAR-2022', 'DD-MON-YYYY'), 2700, 400, 'Sales');
+
+-- f) List the names of employees whose names have "i" as the second character
+SELECT ENAME FROM EMP WHERE SUBSTR(ENAME, 2, 1) = 'i';
+
+-- g) List names of employees who are not managers
+SELECT ENAME FROM EMP WHERE JOB <> 'Manager';
+
+-- h) Display the highest, lowest, sum, and average of all employees
+SELECT MAX(SAL) AS Maximum, MIN(SAL) AS Minimum, SUM(SAL) AS Total, AVG(SAL) AS Average FROM EMP;
+
+-- i) Modify the above query to display the highest, lowest, sum, and average salary for each job type
+SELECT JOB, MAX(SAL) AS Maximum, MIN(SAL) AS Minimum, SUM(SAL) AS Total, AVG(SAL) AS Average 
+FROM EMP GROUP BY JOB;
+
+-- j) Determine the number of managers. Label the column "Number of managers"
+SELECT COUNT(*) AS "Number of managers" FROM EMP WHERE JOB = 'Manager';
+
+-- k) Find the employees who were hired after '01-jan-1980'
+SELECT * FROM EMP WHERE HIREDATE > TO_DATE('01-JAN-1980', 'DD-MON-YYYY');
+
+-- l) Display the name of employee who earns the maximum salary whose job is salesman
+SELECT ENAME FROM EMP WHERE JOB = 'Salesman' AND SAL = (SELECT MAX(SAL) FROM EMP WHERE JOB = 'Salesman');
+
+-- m) Display the name of employee who earns minimum salary and whose job is clerk
+SELECT ENAME FROM EMP WHERE JOB = 'Clerk' AND SAL = (SELECT MIN(SAL) FROM EMP WHERE JOB = 'Clerk');
+
+-- n) Display the name of the department in which 'FORD' works
+SELECT DEPT_NAME FROM EMP WHERE ENAME = 'FORD';
+
+-- o) Display the name of the department whose salary is maximum
+SELECT DEPT_NAME FROM EMP WHERE SAL = (SELECT MAX(SAL) FROM EMP);
+
+-- p) List the name of the employee whose salary is more than 'TURNER'
+SELECT ENAME FROM EMP WHERE SAL > (SELECT SAL FROM EMP WHERE ENAME = 'TURNER');

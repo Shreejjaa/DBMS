@@ -1,0 +1,56 @@
+ Find the names of all clients having 'a' as the second letter in their names.
+
+sql
+Copy code
+SELECT client_name
+FROM clients
+WHERE SUBSTR(client_name, 2, 1) = 'a';
+b) Find out the clients who stay in a city whose second letter is 'a'.
+
+sql
+Copy code
+SELECT client_name
+FROM clients
+WHERE SUBSTR(city, 2, 1) = 'a';
+c) Find the list of all clients who stay in 'Bombay' or 'Delhi'
+
+sql
+Copy code
+SELECT client_name
+FROM clients
+WHERE city IN ('Bombay', 'Delhi');
+d) Print the list of clients whose bal_due is greater than value 10000.
+
+sql
+Copy code
+SELECT client_name
+FROM clients
+WHERE bal_due > 10000;
+e) Print the information from sales_order table for orders placed in the month of January.
+
+sql
+Copy code
+SELECT *
+FROM sales_order
+WHERE EXTRACT(MONTH FROM order_date) = 1;
+f) Display the order information for client_no 'C00001' and 'C00002'.
+
+sql
+Copy code
+SELECT *
+FROM sales_order
+WHERE client_no IN ('C00001', 'C00002');
+g) Find products whose selling price is greater than 2000 and less than or equal to 5000.
+
+sql
+Copy code
+SELECT *
+FROM products
+WHERE selling_price > 2000 AND selling_price <= 5000;
+h) Find products whose selling price is more than 1500. Calculate a new selling price as original selling price multiplied by 1.1 (increased by 10%).
+
+sql
+Copy code
+SELECT product_name, selling_price, selling_price * 1.1 AS new_selling_price
+FROM products
+WHERE selling_price > 1500;
