@@ -1,0 +1,202 @@
+-- Create EMP table
+CREATE TABLE emp (
+    empno NUMBER PRIMARY KEY,
+    ename VARCHAR2(50),
+    job VARCHAR2(50),
+    mgr NUMBER,
+    hiredate DATE,
+    sal NUMBER,
+    comm NUMBER,
+    deptno NUMBER,
+    grade NUMBER
+);
+
+-- Create DEPT table
+CREATE TABLE dept (
+    deptno NUMBER PRIMARY KEY,
+    dname VARCHAR2(50),
+    loc VARCHAR2(50)
+);
+
+-- Create ACCOUNTS table
+CREATE TABLE accounts (
+    account_number NUMBER PRIMARY KEY,
+    balance NUMBER
+);
+
+-- Create BONUS table
+CREATE TABLE bonus (
+    empno NUMBER,
+    bonus_amount NUMBER,
+    bonus_date DATE,
+    FOREIGN KEY (empno) REFERENCES emp(empno)
+);
+
+-- Create EMP_SALARY_HISTORY table
+CREATE TABLE emp_salary_history (
+    empno NUMBER,
+    old_sal NUMBER,
+    new_sal NUMBER,
+    change_date DATE,
+    FOREIGN KEY (empno) REFERENCES emp(empno)
+);
+-- Insert sample data into DEPT table
+INSERT INTO dept (deptno, dname, loc) VALUES (10, 'ACCOUNTING', 'NEW YORK');
+INSERT INTO dept (deptno, dname, loc) VALUES (20, 'RESEARCH', 'DALLAS');
+INSERT INTO dept (deptno, dname, loc) VALUES (30, 'SALES', 'CHICAGO');
+INSERT INTO dept (deptno, dname, loc) VALUES (40, 'OPERATIONS', 'BOSTON');
+
+-- Insert sample data into EMP table
+INSERT INTO emp (empno, ename, job, mgr, hiredate, sal, comm, deptno, grade) VALUES (7369, 'SMITH', 'CLERK', 7902, TO_DATE('1980-12-17', 'YYYY-MM-DD'), 800, NULL, 20, 1);
+INSERT INTO emp (empno, ename, job, mgr, hiredate, sal, comm, deptno, grade) VALUES (7499, 'ALLEN', 'SALESMAN', 7698, TO_DATE('1981-02-20', 'YYYY-MM-DD'), 1600, 300, 30, 3);
+INSERT INTO emp (empno, ename, job, mgr, hiredate, sal, comm, deptno, grade) VALUES (7521, 'WARD', 'SALESMAN', 7698, TO_DATE('1981-02-22', 'YYYY-MM-DD'), 1250, 500, 30, 3);
+INSERT INTO emp (empno, ename, job, mgr, hiredate, sal, comm, deptno, grade) VALUES (7566, 'JONES', 'MANAGER', 7839, TO_DATE('1981-04-02', 'YYYY-MM-DD'), 2975, NULL, 20, 2);
+INSERT INTO emp (empno, ename, job, mgr, hiredate, sal, comm, deptno, grade) VALUES (7654, 'MARTIN', 'SALESMAN', 7698, TO_DATE('1981-09-28', 'YYYY-MM-DD'), 1250, 1400, 30, 3);
+INSERT INTO emp (empno, ename, job, mgr, hiredate, sal, comm, deptno, grade) VALUES (7698, 'BLAKE', 'MANAGER', 7839, TO_DATE('1981-05-01', 'YYYY-MM-DD'), 2850, NULL, 30, 2);
+INSERT INTO emp (empno, ename, job, mgr, hiredate, sal, comm, deptno, grade) VALUES (7782, 'CLARK', 'MANAGER', 7839, TO_DATE('1981-06-09', 'YYYY-MM-DD'), 2450, NULL, 10, 2);
+INSERT INTO emp (empno, ename, job, mgr, hiredate, sal, comm, deptno, grade) VALUES (7788, 'SCOTT', 'ANALYST', 7566, TO_DATE('1982-12-09', 'YYYY-MM-DD'), 3000, NULL, 20, 3);
+INSERT INTO emp (empno, ename, job, mgr, hiredate, sal, comm, deptno, grade) VALUES (7839, 'KING', 'PRESIDENT', NULL, TO_DATE('1981-11-17', 'YYYY-MM-DD'), 5000, NULL, 10, 5);
+INSERT INTO emp (empno, ename, job, mgr, hiredate, sal, comm, deptno, grade) VALUES (7844, 'TURNER', 'SALESMAN', 7698, TO_DATE('1981-09-08', 'YYYY-MM-DD'), 1500, 0, 30, 3);
+INSERT INTO emp (empno, ename, job, mgr, hiredate, sal, comm, deptno, grade) VALUES (7876, 'ADAMS', 'CLERK', 7788, TO_DATE('1983-01-12', 'YYYY-MM-DD'), 1100, NULL, 20, 1);
+INSERT INTO emp (empno, ename, job, mgr, hiredate, sal, comm, deptno, grade) VALUES (7900, 'JAMES', 'CLERK', 7698, TO_DATE('1981-12-03', 'YYYY-MM-DD'), 950, NULL, 30, 1);
+INSERT INTO emp (empno, ename, job, mgr, hiredate, sal, comm, deptno, grade) VALUES (7902, 'FORD', 'ANALYST', 7566, TO_DATE('1981-12-03', 'YYYY-MM-DD'), 3000, NULL, 20, 3);
+INSERT INTO emp (empno, ename, job, mgr, hiredate, sal, comm, deptno, grade) VALUES (7934, 'MILLER', 'CLERK', 7782, TO_DATE('1982-01-23', 'YYYY-MM-DD'), 1300, NULL, 10, 1);
+
+-- Insert sample data into ACCOUNTS table
+INSERT INTO accounts (account_number, balance) VALUES (1001, 400);
+INSERT INTO accounts (account_number, balance) VALUES (1002, 600);
+INSERT INTO accounts (account_number, balance) VALUES (1003, 700);
+INSERT INTO accounts (account_number, balance) VALUES (1004, 200);
+
+-- Insert sample data into BONUS table
+-- This will be populated by the PL/SQL procedure
+
+-- Insert sample data into EMP_SALARY_HISTORY table
+-- This will be populated by the PL/SQL procedure
+
+Deduct Rs. 100 if balance is less than minimum balance
+sql
+Copy code
+DECLARE
+    v_account_number NUMBER;
+    v_balance NUMBER;
+    v_min_balance CONSTANT NUMBER := 500; -- Assuming the minimum balance is 500
+BEGIN
+    -- Accept the account number
+    v_account_number := &account_number;
+    
+    -- Fetch the account balance
+    SELECT balance INTO v_balance
+    FROM accounts
+    WHERE account_number = v_account_number;
+    
+    -- Check if balance is less than minimum balance
+    IF v_balance < v_min_balance THEN
+        UPDATE accounts
+        SET balance = balance - 100
+        WHERE account_number = v_account_number;
+        
+        DBMS_OUTPUT.PUT_LINE('Rs. 100/- has been deducted from the balance.');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Balance is sufficient.');
+    END IF;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Account number not found.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
+b) Find the first three characters of the employee name hired in 1981
+sql
+Copy code
+SELECT SUBSTR(ename, 1, 3) AS nickname, ename, empno, job, mgr, hiredate, sal, comm, deptno
+FROM emp
+WHERE TO_CHAR(hiredate, 'YYYY') = '1981';
+c) Find the employees whose salaries are among the top seven
+sql
+Copy code
+SELECT empno, ename, job, mgr, hiredate, sal, comm, deptno
+FROM (
+    SELECT empno, ename, job, mgr, hiredate, sal, comm, deptno,
+           DENSE_RANK() OVER (ORDER BY sal DESC) AS rank
+    FROM emp
+) 
+WHERE rank <= 7;
+d) 20% bonus to salesmen in Chicago with salaries < 15000
+sql
+Copy code
+BEGIN
+    INSERT INTO bonus (empno, bonus_amount, bonus_date)
+    SELECT empno, sal * 0.20, SYSDATE
+    FROM emp
+    WHERE job = 'SALESMAN' AND sal < 15000 AND deptno IN (
+        SELECT deptno FROM dept WHERE loc = 'CHICAGO'
+    );
+
+    DBMS_OUTPUT.PUT_LINE('Bonus records inserted.');
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
+e) Insert two records for Boston office
+sql
+Copy code
+DECLARE
+    v_min_sal_grade2 NUMBER;
+    v_min_sal_grade3 NUMBER;
+BEGIN
+    -- Assuming grade 2 and grade 3 salaries are defined in a table called 'grades'
+    SELECT MIN(sal) INTO v_min_sal_grade2 FROM emp WHERE grade = 2;
+    SELECT MIN(sal) INTO v_min_sal_grade3 FROM emp WHERE grade = 3;
+
+    INSERT INTO emp (empno, ename, job, mgr, hiredate, sal, comm, deptno)
+    VALUES (emp_seq.NEXTVAL, 'NewEmp1', 'CLERK', NULL, SYSDATE, v_min_sal_grade2, NULL, (SELECT deptno FROM dept WHERE loc = 'BOSTON'));
+
+    INSERT INTO emp (empno, ename, job, mgr, hiredate, sal, comm, deptno)
+    VALUES (emp_seq.NEXTVAL, 'NewEmp2', 'CLERK', NULL, SYSDATE, v_min_sal_grade3, NULL, (SELECT deptno FROM dept WHERE loc = 'BOSTON'));
+
+    DBMS_OUTPUT.PUT_LINE('New employees added.');
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
+f) Salary hike for employees based on grade
+sql
+Copy code
+DECLARE
+    CURSOR emp_cur IS SELECT empno, sal, grade FROM emp;
+    v_empno emp.empno%TYPE;
+    v_sal emp.sal%TYPE;
+    v_grade emp.grade%TYPE;
+    v_new_sal emp.sal%TYPE;
+BEGIN
+    FOR emp_rec IN emp_cur LOOP
+        v_empno := emp_rec.empno;
+        v_sal := emp_rec.sal;
+        v_grade := emp_rec.grade;
+        
+        CASE v_grade
+            WHEN 1 THEN v_new_sal := v_sal * 1.15;
+            WHEN 2 THEN v_new_sal := v_sal * 1.12;
+            WHEN 3 THEN v_new_sal := v_sal * 1.10;
+            WHEN 4 THEN v_new_sal := v_sal * 1.10;
+            WHEN 5 THEN v_new_sal := v_sal * 1.05;
+            ELSE v_new_sal := v_sal;
+        END CASE;
+
+        UPDATE emp SET sal = v_new_sal WHERE empno = v_empno;
+
+        INSERT INTO emp_salary_history (empno, old_sal, new_sal, change_date)
+        VALUES (v_empno, v_sal, v_new_sal, SYSDATE);
+    END LOOP;
+
+    DBMS_OUTPUT.PUT_LINE('Salaries updated and history recorded.');
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
+/
+
